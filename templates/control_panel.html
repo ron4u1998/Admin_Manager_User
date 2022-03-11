@@ -1,0 +1,155 @@
+{% extends 'base.html' %} {% block body %} {% if current_user.access == 1%}
+<h1>Manager Control Panel</h1>
+{% elif current_user.access == 2 %}
+<h1>Admin Control Panel </h1>
+{% endif %}
+
+<div>
+
+    {% if users %} {% if current_user.access == 2%}
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>E-mail</th>
+                <th>Username</th>
+                {% if current_user.access == 1 %}
+                <th>Manager</th>
+                {% endif %}
+                <th>Access Level</th>
+
+                <th>
+                    {% if current_user.access == 2 %}
+                    <form action="{{ url_for('new_user') }}" method="GET">
+                        <input type="submit" value="New User" class="btn btn-primary" />
+                    </form>
+                    {% elif current_user.access == 1 %}
+                    <form action="{{ url_for('new_user_manager') }}" method="GET">
+                        <input type="submit" value="New User" class="btn btn-primary" />
+                    </form>
+                    {% endif %}
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for row in users %} {% if row.access == 1 or row.access == 2 %}
+            <tr>
+                <td> {{ row.name }}</td>
+                <td> {{ row.email }}</td>
+                <td> {{ row.username }}</td>
+                {% if current_user.access == 1 %}
+                <td> {{ row.manager }}</td>
+                {% endif %}
+                <td>
+                    {% if row.access == 1 %} Manager {% elif row.access == 2 %} Admin {% elif row.access == 0 %} User {% else %} -- {% endif %}
+                </td>
+
+                <td>
+                    {% if current_user.access == 2 %}
+                    <form action="{{ url_for('user_detail', user_id=row.id) }}" method="POST">
+                        <input type="submit" value="Details" class="btn btn-outline-primary btn-sm" />
+                    </form>
+                    {% elif current_user.access == 1 %}
+                    <form action="{{ url_for('user_detail_manager', user_id=row.id) }}" method="POST">
+                        <input type="submit" value="Details" class="btn btn-outline-primary btn-sm" />
+                    </form>
+                    {% endif %}
+                </td>
+                <!-- ########## -->
+                {% for person in usersonly %} {% if person.access == 0 and person.manager == row.id %}
+
+                <tr>
+                    <td> {{ person.name }}</td>
+                    <td> {{ person.email }}</td>
+                    <td> {{ person.username }}</td>
+                    {% if current_user.access == 1 %}
+                    <td> {{ row.manager }}</td>
+                    {% endif %}
+
+                    <td>
+                        {% if person.access == 0 %} User {% else %} -- {% endif %}
+                    </td>
+                    <td>
+                        {% if current_user.access == 2 %}
+                        <form action="{{ url_for('user_detail', user_id=row.id) }}" method="POST">
+                            <input type="submit" value="Details" class="btn btn-outline-primary btn-sm" />
+                        </form>
+                        {% elif current_user.access == 1 %}
+                        <form action="{{ url_for('user_detail_manager', user_id=row.id) }}" method="POST">
+                            <input type="submit" value="Details" class="btn btn-outline-primary btn-sm" />
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endif %} {% endfor %}
+                <!-- ################ -->
+            </tr>
+            {% endif %} {% endfor %}
+        </tbody>
+    </table>
+    <!-- Manager Portion -->
+    {% else %}
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>E-mail</th>
+                <th>Username</th>
+                {% if current_user.access == 1 %}
+                <th>Manager</th>
+                {% endif %}
+                <th>Access Level</th>
+
+                <th>
+                    {% if current_user.access == 2 %}
+                    <form action="{{ url_for('new_user') }}" method="GET">
+                        <input type="submit" value="New User" class="btn btn-primary" />
+                    </form>
+                    {% elif current_user.access == 1 %}
+                    <form action="{{ url_for('new_user_manager') }}" method="GET">
+                        <input type="submit" value="New User" class="btn btn-primary" />
+                    </form>
+                    {% endif %}
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for row in users %}
+            <tr>
+                <td> {{ row.name }}</td>
+                <td> {{ row.email }}</td>
+                <td> {{ row.username }}</td>
+                {% if current_user.access == 1 %}
+                <td> {{ row.manager }}</td>
+                {% endif %}
+
+                <td>
+                    {% if row.access == 1 %} Manager {% elif row.access == 2 %} Admin {% elif row.access == 0 %} User {% else %} -- {% endif %}
+                </td>
+                <td>
+                    {% if current_user.access == 2 %}
+                    <form action="{{ url_for('user_detail', user_id=row.id) }}" method="POST">
+                        <input type="submit" value="Details" class="btn btn-outline-primary btn-sm" />
+                    </form>
+                    {% elif current_user.access == 1 %}
+                    <form action="{{ url_for('user_detail_manager', user_id=row.id) }}" method="POST">
+                        <input type="submit" value="Details" class="btn btn-outline-primary btn-sm" />
+                    </form>
+                    {% endif %}
+
+
+                </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% endif %}
+    <!-- End Manager else -->
+    {% endif %}
+
+</div>
+{% endblock %}
